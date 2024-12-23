@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
 import {
   Box,
   Flex,
@@ -15,7 +15,8 @@ import {
   Image,
   IconButton,
   useColorMode,
-} from "@chakra-ui/react";
+  Link,
+} from '@chakra-ui/react';
 import {
   FaHeart,
   FaRegHeart,
@@ -24,24 +25,25 @@ import {
   FaSortAlphaDown,
   FaMoon,
   FaSun,
-} from "react-icons/fa";
-import ChannelCard from "../components/channelCard";
-import { LANGUAGES, CATEGORIES } from "../utils/constants";
+  FaGithub,
+} from 'react-icons/fa';
+import ChannelCard from '../components/channelCard';
+import { LANGUAGES, CATEGORIES } from '../utils/constants';
 
 const ContentGuide = () => {
   const [channels, setChannels] = useState([]);
   const [filteredChannels, setFilteredChannels] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [languageFilter, setLanguageFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [languageFilter, setLanguageFilter] = useState('All');
   const [isHD, setIsHD] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
   const [favorites, setFavorites] = useState(() => {
-    return JSON.parse(localStorage.getItem("favorites")) || [];
+    return JSON.parse(localStorage.getItem('favorites')) || [];
   });
   const [showFavorites, setShowFavorites] = useState(false);
-  const [sortOrder, setSortOrder] = useState("none");
+  const [sortOrder, setSortOrder] = useState('none');
   const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
@@ -49,12 +51,12 @@ const ContentGuide = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          "https://contenthub-api.eco.astro.com.my/channel/all.json"
+          'https://contenthub-api.eco.astro.com.my/channel/all.json'
         );
         setChannels(response.data.response || []);
         setFilteredChannels(response.data.response || []);
       } catch (error) {
-        console.error("Error fetching channels:", error);
+        console.error('Error fetching channels:', error);
       } finally {
         setIsLoading(false);
       }
@@ -64,50 +66,50 @@ const ContentGuide = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
 
   const filterChannels = useMemo(() => {
     setIsFiltering(true);
     let updatedChannels = channels;
 
-    if (categoryFilter !== "All") {
+    if (categoryFilter !== 'All') {
       updatedChannels = updatedChannels.filter(
-        (channel) => channel.category === categoryFilter
+        channel => channel.category === categoryFilter
       );
     }
 
-    if (languageFilter !== "All") {
+    if (languageFilter !== 'All') {
       updatedChannels = updatedChannels.filter(
-        (channel) => channel.language === languageFilter
+        channel => channel.language === languageFilter
       );
     }
 
     if (isHD) {
-      updatedChannels = updatedChannels.filter((channel) =>
-        channel.title.includes("HD")
+      updatedChannels = updatedChannels.filter(channel =>
+        channel.title.includes('HD')
       );
     }
 
     if (searchTerm) {
       updatedChannels = updatedChannels.filter(
-        (channel) =>
+        channel =>
           channel.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           channel.stbNumber.includes(searchTerm)
       );
     }
 
     if (showFavorites) {
-      updatedChannels = updatedChannels.filter((channel) =>
+      updatedChannels = updatedChannels.filter(channel =>
         favorites.includes(channel.id)
       );
     }
 
-    if (sortOrder === "ascending") {
+    if (sortOrder === 'ascending') {
       updatedChannels = [...updatedChannels].sort((a, b) =>
         a.title.localeCompare(b.title)
       );
-    } else if (sortOrder === "descending") {
+    } else if (sortOrder === 'descending') {
       updatedChannels = [...updatedChannels].sort((a, b) =>
         b.title.localeCompare(a.title)
       );
@@ -129,34 +131,34 @@ const ContentGuide = () => {
     setIsFiltering(false);
   }, [filterChannels]);
 
-  const handleSearch = (event) => {
+  const handleSearch = event => {
     setSearchTerm(event.target.value);
   };
 
-  const handleCategoryFilter = (category) => {
+  const handleCategoryFilter = category => {
     setCategoryFilter(category);
   };
 
-  const handleLanguageFilter = (language) => {
+  const handleLanguageFilter = language => {
     setLanguageFilter(language);
   };
 
-  const toggleFavorite = (channelId) => {
+  const toggleFavorite = channelId => {
     if (favorites.includes(channelId)) {
-      setFavorites(favorites.filter((id) => id !== channelId));
+      setFavorites(favorites.filter(id => id !== channelId));
     } else {
       setFavorites([...favorites, channelId]);
     }
   };
 
   const toggleSortOrder = () => {
-    setSortOrder((prevSortOrder) => {
-      if (prevSortOrder === "none") {
-        return "ascending";
-      } else if (prevSortOrder === "ascending") {
-        return "descending";
+    setSortOrder(prevSortOrder => {
+      if (prevSortOrder === 'none') {
+        return 'ascending';
+      } else if (prevSortOrder === 'ascending') {
+        return 'descending';
       } else {
-        return "none";
+        return 'none';
       }
     });
   };
@@ -205,14 +207,14 @@ const ContentGuide = () => {
                   placeholder="Search Channels"
                   value={searchTerm}
                   onChange={handleSearch}
-                  bg={colorMode === "light" ? "white" : "gray.700"}
-                  color={colorMode === "light" ? "black" : "white"}
+                  bg={colorMode === 'light' ? 'white' : 'gray.700'}
+                  color={colorMode === 'light' ? 'black' : 'white'}
                 />
 
                 <IconButton
                   aria-label="Toggle dark mode"
                   icon={
-                    colorMode === "light" ? (
+                    colorMode === 'light' ? (
                       <FaSun color="orange" />
                     ) : (
                       <FaMoon color="black" />
@@ -220,7 +222,7 @@ const ContentGuide = () => {
                   }
                   onClick={toggleColorMode}
                   bg="gray.200"
-                  _hover={{ bg: "gray.300" }}
+                  _hover={{ bg: 'gray.300' }}
                 />
               </HStack>
             </VStack>
@@ -230,25 +232,25 @@ const ContentGuide = () => {
               </Text>
               <Flex wrap="wrap">
                 <Button
-                  onClick={() => handleCategoryFilter("All")}
+                  onClick={() => handleCategoryFilter('All')}
                   m={1}
-                  bg={categoryFilter === "All" ? "blue.500" : "gray.200"}
-                  color={categoryFilter === "All" ? "white" : "black"}
+                  bg={categoryFilter === 'All' ? 'blue.500' : 'gray.200'}
+                  color={categoryFilter === 'All' ? 'white' : 'black'}
                   _hover={{
-                    bg: categoryFilter === "All" ? "blue.600" : "gray.300",
+                    bg: categoryFilter === 'All' ? 'blue.600' : 'gray.300',
                   }}
                 >
                   All
                 </Button>
-                {CATEGORIES.map((category) => (
+                {CATEGORIES.map(category => (
                   <Button
                     key={category}
                     onClick={() => handleCategoryFilter(category)}
                     m={1}
-                    bg={categoryFilter === category ? "blue.500" : "gray.200"}
-                    color={categoryFilter === category ? "white" : "black"}
+                    bg={categoryFilter === category ? 'blue.500' : 'gray.200'}
+                    color={categoryFilter === category ? 'white' : 'black'}
                     _hover={{
-                      bg: categoryFilter === category ? "blue.600" : "gray.300",
+                      bg: categoryFilter === category ? 'blue.600' : 'gray.300',
                     }}
                   >
                     {category}
@@ -263,25 +265,25 @@ const ContentGuide = () => {
               </Text>
               <Flex wrap="wrap">
                 <Button
-                  onClick={() => handleLanguageFilter("All")}
+                  onClick={() => handleLanguageFilter('All')}
                   m={1}
-                  bg={languageFilter === "All" ? "blue.500" : "gray.200"}
-                  color={languageFilter === "All" ? "white" : "black"}
+                  bg={languageFilter === 'All' ? 'blue.500' : 'gray.200'}
+                  color={languageFilter === 'All' ? 'white' : 'black'}
                   _hover={{
-                    bg: languageFilter === "All" ? "blue.600" : "gray.300",
+                    bg: languageFilter === 'All' ? 'blue.600' : 'gray.300',
                   }}
                 >
                   All
                 </Button>
-                {LANGUAGES.map((lang) => (
+                {LANGUAGES.map(lang => (
                   <Button
                     key={lang}
                     onClick={() => handleLanguageFilter(lang)}
                     m={1}
-                    bg={languageFilter === lang ? "blue.500" : "gray.200"}
-                    color={languageFilter === lang ? "white" : "black"}
+                    bg={languageFilter === lang ? 'blue.500' : 'gray.200'}
+                    color={languageFilter === lang ? 'white' : 'black'}
                     _hover={{
-                      bg: languageFilter === lang ? "blue.600" : "gray.300",
+                      bg: languageFilter === lang ? 'blue.600' : 'gray.300',
                     }}
                   >
                     {lang}
@@ -298,10 +300,10 @@ const ContentGuide = () => {
                 <Button
                   onClick={() => setIsHD(!isHD)}
                   m={1}
-                  bg={isHD ? "blue.500" : "gray.200"}
-                  color={isHD ? "white" : "black"}
+                  bg={isHD ? 'blue.500' : 'gray.200'}
+                  color={isHD ? 'white' : 'black'}
                   _hover={{
-                    bg: isHD ? "blue.600" : "gray.300",
+                    bg: isHD ? 'blue.600' : 'gray.300',
                   }}
                 >
                   HD
@@ -311,16 +313,16 @@ const ContentGuide = () => {
                   icon={showFavorites ? <FaHeart /> : <FaRegHeart />}
                   onClick={() => setShowFavorites(!showFavorites)}
                   bg="gray.200"
-                  color={showFavorites ? "pink.500" : "gray.500"}
+                  color={showFavorites ? 'pink.500' : 'gray.500'}
                   fontSize="1.5rem"
                 />
 
                 <IconButton
                   aria-label="Sort channels"
                   icon={
-                    sortOrder === "ascending" ? (
+                    sortOrder === 'ascending' ? (
                       <FaSortAlphaDown />
-                    ) : sortOrder === "descending" ? (
+                    ) : sortOrder === 'descending' ? (
                       <FaSortAlphaUp />
                     ) : (
                       <FaFilter />
@@ -331,7 +333,7 @@ const ContentGuide = () => {
                   color="black"
                   bg="gray.200"
                   _hover={{
-                    bg: "gray.300",
+                    bg: 'gray.300',
                   }}
                 />
               </HStack>
@@ -355,15 +357,15 @@ const ContentGuide = () => {
             ) : (
               <Grid
                 templateColumns={{
-                  base: "1fr",
-                  sm: "1fr",
-                  md: "repeat(2, 1fr)",
-                  lg: "repeat(3, 1fr)",
+                  base: '1fr',
+                  sm: '1fr',
+                  md: 'repeat(2, 1fr)',
+                  lg: 'repeat(3, 1fr)',
                 }}
                 gap={6}
               >
                 {filteredChannels.length > 0 ? (
-                  filteredChannels.map((channel) => (
+                  filteredChannels.map(channel => (
                     <ChannelCard
                       key={channel.id}
                       channel={channel}
@@ -376,6 +378,53 @@ const ContentGuide = () => {
                 )}
               </Grid>
             )}
+
+            <Box
+              as="footer"
+              mt={10}
+              bg={colorMode === 'light' ? 'gray.100' : 'gray.700'}
+              py={5}
+              px={4}
+              textAlign="center"
+              borderTop="1px solid"
+              borderColor={colorMode === 'light' ? 'gray.200' : 'gray.600'}
+              fontSize={{
+                base: 'xs',
+                sm: 'xs',
+                md: 'sm',
+                lg: 'sm',
+              }}
+            >
+              <Text
+                mb={2}
+                color={colorMode === 'light' ? 'gray.600' : 'gray.300'}
+                textAlign="justify"
+              >
+                Disclaimer: This website is for educational purposes only and is
+                not affiliated with or endorsed by Astro Malaysia Holdings
+                Berhad or its subsidiaries. All content is sourced from publicly
+                available APIs and remains the property of their respective
+                owners. No copyright infringement is intended.
+              </Text>
+              <Flex justifyContent="center" alignItems="center">
+                <Text color={colorMode === 'light' ? 'gray.600' : 'gray.300'}>
+                  View on GitHub
+                </Text>
+                <Link
+                  href="https://github.com/KelveenRaj/astro-content-guide"
+                  isExternal
+                  color="blue.500"
+                >
+                  <IconButton
+                    aria-label="GitHub Repository"
+                    icon={<FaGithub />}
+                    size="sm"
+                    variant="ghost"
+                    colorScheme="gray"
+                  />
+                </Link>
+              </Flex>
+            </Box>
           </Box>
         </>
       )}
